@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:sqlserver://(localdb)\MSSQLLocalDB;databaseName=ApologeticsCrucible;encrypt=false;trustServerCertificate=true
+    username: sa
+    password: YourPasswordHere
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+  # Optional but helpful — stops Spring Data JDBC from trying to auto-configure tables
+  data:
+    jdbc:
+      repositories:
+        enabled: false
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.jdbc: DEBUG
+    com.microsoft.sqlserver: DEBUG
