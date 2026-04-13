@@ -1,0 +1,167 @@
+<div class="ingestion-preview-container">
+  <div class="header">
+    <h1>Ingestion Preview</h1>
+    <button
+      class="btn btn-primary btn-commit"
+      (click)="commitAll()"
+      [disabled]="isLoading() || rows().length === 0">
+      {{ isLoading() ? 'Committing...' : 'Commit All to Nodes' }}
+    </button>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error()" class="alert alert-danger alert-dismissible fade show">
+    {{ error() }}
+    <button type="button" class="btn-close" (click)="error.set(null)"></button>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading() && rows().length === 0" class="spinner">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Ingestion Preview Grid -->
+  <div *ngIf="!isLoading() || rows().length > 0" class="table-responsive">
+    <table class="table table-hover table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Source Text</th>
+          <th>Blurb</th>
+          <th>Suggested Strength</th>
+          <th>Association Type</th>
+          <th>Proposition ID</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of rows()" class="row-item">
+          <!-- ID Column -->
+          <td class="col-id">{{ row.id }}</td>
+
+          <!-- Source Text Column -->
+          <td class="col-source-text" [title]="row.sourceText">
+            {{ row.sourceText | slice:0:50 }}{{ (row.sourceText?.length ?? 0) > 50 ? '...' : '' }}
+          </td>
+
+          <!-- Blurb Column (Editable) -->
+          <td class="col-blurb">
+            <div *ngIf="isEditing(row.id, 'blurb')" class="edit-field">
+              <input
+                type="text"
+                class="form-control form-control-sm"
+                [(ngModel)]="row.blurb"
+                (keyup.escape)="cancelEdit()"
+                (keyup.enter)="saveField(row, 'blurb')"
+                autofocus>
+              <div class="edit-actions">
+                <button
+                  class="btn btn-sm btn-success"
+                  (click)="saveField(row, 'blurb')">
+                  ✓
+                </button>
+                <button
+                  class="btn btn-sm btn-danger"
+                  (click)="cancelEdit()">
+                  ✗
+                </button>
+              </div>
+            </div>
+            <div *ngIf="!isEditing(row.id, 'blurb')" class="view-field" (click)="startEdit(row, 'blurb')">
+              {{ row.blurb || '—' }}
+            </div>
+          </td>
+
+          <!-- Suggested Strength Column (Editable) -->
+          <td class="col-strength">
+            <div *ngIf="isEditing(row.id, 'suggestedStrength')" class="edit-field">
+              <select
+                class="form-select form-select-sm"
+                [(ngModel)]="row.suggestedStrength"
+                (keyup.escape)="cancelEdit()"
+                (change)="saveField(row, 'suggestedStrength')"
+                autofocus>
+                <option value="">Select...</option>
+                <option value="Strong">Strong</option>
+                <option value="Moderate">Moderate</option>
+                <option value="Weak">Weak</option>
+              </select>
+              <div class="edit-actions">
+                <button
+                  class="btn btn-sm btn-success"
+                  (click)="saveField(row, 'suggestedStrength')">
+                  ✓
+                </button>
+                <button
+                  class="btn btn-sm btn-danger"
+                  (click)="cancelEdit()">
+                  ✗
+                </button>
+              </div>
+            </div>
+            <div *ngIf="!isEditing(row.id, 'suggestedStrength')" class="view-field" (click)="startEdit(row, 'suggestedStrength')">
+              <span
+                *ngIf="row.suggestedStrength"
+                [ngClass]="'badge ' + getStrengthBadgeClass(row.suggestedStrength)">
+                {{ row.suggestedStrength }}
+              </span>
+              <span *ngIf="!row.suggestedStrength" class="text-muted">—</span>
+            </div>
+          </td>
+
+          <!-- Association Type Column (Editable) -->
+          <td class="col-association">
+            <div *ngIf="isEditing(row.id, 'associationType')" class="edit-field">
+              <input
+                type="text"
+                class="form-control form-control-sm"
+                [(ngModel)]="row.associationType"
+                (keyup.escape)="cancelEdit()"
+                (keyup.enter)="saveField(row, 'associationType')"
+                autofocus>
+              <div class="edit-actions">
+                <button
+                  class="btn btn-sm btn-success"
+                  (click)="saveField(row, 'associationType')">
+                  ✓
+                </button>
+                <button
+                  class="btn btn-sm btn-danger"
+                  (click)="cancelEdit()">
+                  ✗
+                </button>
+              </div>
+            </div>
+            <div *ngIf="!isEditing(row.id, 'associationType')" class="view-field" (click)="startEdit(row, 'associationType')">
+              {{ row.associationType || '—' }}
+            </div>
+          </td>
+
+          <!-- Proposition ID Column -->
+          <td class="col-proposition-id">{{ row.propositionId || '—' }}</td>
+
+          <!-- Actions Column -->
+          <td class="col-actions">
+            <button
+              class="btn btn-sm btn-outline-primary"
+              (click)="startEdit(row, 'blurb')"
+              [disabled]="editingRowId() !== null">
+              Edit
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading() && rows().length === 0" class="alert alert-info">
+    No ingestion preview data available.
+    <button class="btn btn-sm btn-info ms-2" (click)="loadIngestionPreview()">
+      Retry
+    </button>
+  </div>
+</div>
+
