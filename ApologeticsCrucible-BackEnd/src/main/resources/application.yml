@@ -1,11 +1,11 @@
+
 spring:
   datasource:
-    url: jdbc:sqlserver://(localdb)\MSSQLLocalDB;databaseName=ApologeticsCrucible;encrypt=false;trustServerCertificate=true
-    username: sa
-    password: YourPasswordHere
+    url: jdbc:sqlserver://(localdb)\\MSSQLLocalDB;databaseName=ApologeticsCrucible;encrypt=false;trustServerCertificate=true;integratedSecurity=true
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
-  # Optional but helpful — stops Spring Data JDBC from trying to auto-configure tables
+
+  # Disable Spring Data JDBC auto-config (we use our own stored procedures)
   data:
     jdbc:
       repositories:

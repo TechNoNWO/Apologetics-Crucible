@@ -18,7 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/ingestion-preview")
 @RequiredArgsConstructor
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class IngestionPreviewController {
 
     private static final Logger logger = LoggerFactory.getLogger(IngestionPreviewController.class);
